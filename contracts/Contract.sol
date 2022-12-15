@@ -26,14 +26,14 @@ contract MyContract {
     }
 
     //adds new staff address, admin only
-    function addstaff(address staff) public {
+    function addStaff(address staff) public {
         require(msg.sender == admin, "Access Denied");
         require(!access(staff, staffregistry), "Staff Address Already Exists");
         staffregistry.push(staff);
     }
 
     //removes staff address, admin only
-    function removestaff(address staff) public {
+    function removeStaff(address staff) public {
         require(msg.sender == admin, "Access Denied");
         require(access(staff, staffregistry), "Staff Address Does Not Exist");
         uint256 removal_id;
@@ -68,13 +68,13 @@ contract MyContract {
     }
 
     //returns record data, onwer and trusted medical staff access only
-    function veiwrecord(uint256 id) public view returns(string memory name, string memory surname, string memory ipfsid) {
+    function veiwRecord(uint256 id) public view returns(string memory name, string memory surname, string memory ipfsid) {
         require(records[id].owner == msg.sender || access(msg.sender, records[id].authUsers), "Access Denied");
         return (records[id].name, records[id].surname, records[id].ipfsid); 
     }
 
     //adds address from authorized list, onwer access only
-    function addauthuser(uint256 id, address user) public {
+    function addAuthUser(uint256 id, address user) public {
         require(msg.sender == records[id].owner, "Access Denied");
         require(access(user, staffregistry), "You Can Not Add Non-staff Addresses");
         require(!access(user, records[id].authUsers), "User Already Authorized");
@@ -82,7 +82,7 @@ contract MyContract {
     }
 
     //removes address from authorized list, onwer access only
-    function removeauthuser(uint256 id, address user) public {
+    function removeAuthUser(uint256 id, address user) public {
         require(msg.sender == records[id].owner, "Access Denied");
         require(access(user, records[id].authUsers), "User Does Not Have Authorization");
         uint256 removal_id;
@@ -96,14 +96,14 @@ contract MyContract {
     }
 
     //updates a link to IPFS record when the record is changed and uploaded to IPFS, trusted medical staff access only
-    function addnewipfsrecord(uint256 id, string memory ipfsid) public {
-        //require(msg.sender != records[id].owner, "You Are Not Allowed To Modify Your Own Record");
-        //require(access(msg.sender, records[id].authUsers), "Access Denied");
+    function addNewIPFSRecord(uint256 id, string memory ipfsid) public {
+        require(msg.sender != records[id].owner, "You Are Not Allowed To Modify Your Own Record");
+        require(access(msg.sender, records[id].authUsers), "Access Denied");
         records[id].ipfsid = ipfsid;
     }
 
     //updates record with new name and surname in case the client changed them, trusted medical staff access only
-    function updaterecord(uint id, string memory name, string memory surname) public {
+    function updateRecord(uint id, string memory name, string memory surname) public {
         require(msg.sender != records[id].owner, "You Are Not Allowed To Modify Your Own Record");
         require(access(msg.sender, records[id].authUsers), "Access Denied");
         records[id].name = name;
